@@ -1,0 +1,16 @@
+name: ${name}
+version: ${version}
+author: ${author}
+api-version: ${api-version}
+
+main: ${mainClass}
+
+commands:
+  reloadMainSystem:
+    description: Reload all Values from the config
+    usage: /<command>
+    permission: mainsystem.reload
+  clearchat:
+    description: Clears the chat for all players without permission clearchat.ignore
+    usage: /<command>
+    permission: mainsystem.clearchat

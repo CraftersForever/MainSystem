@@ -1,0 +1,15 @@
+#ServerListPingEvent related stuff goes here
+ping:
+  motd: "&6Your favourite minecraft server!/n&3There are &b&lbees" #Color Codes with '&' can be used. Use "/n" for a line break.
+  image: "server-icon.png" #Images have to be in the folder "icons"
+join:
+  title: "0815Craft"
+  subtitle: "Have fun on the best server!"
+tnt:
+  enabledworlds: #Add here names of the worlds you want to enable tnt in.
+    - "world"
+    - "world_the_end"
+    - "world_nether"
+tablist:
+  header: "Your favourite minecraft server! /n Now 1.15.1"
+  footer: "Join us on teamspeak/nts.myserver.com"
