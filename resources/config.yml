@@ -11,5 +11,19 @@ tnt:
     - "world_the_end"
     - "world_nether"
 tablist:
-  header: "Your favourite minecraft server! /n Now 1.15.1"
+  header: "Your favourite minecraft server! /n Now 1.15.2"
   footer: "Join us on teamspeak/nts.myserver.com"
+command:
+  teamspeak: "Join our teamspeak server at ts.craftersforever.de"
+  discord: "Join our Discord now. https://discord.gg/"
+  vote: "Vote now for our server on https://serverlist.mc/vote/0815Craft"
+trello:
+  key: your API KEY
+  token: Your API token
+  listID: ID of List the card should be in
+vote:
+  broadcast: The good lad %player% has voted for CraftersForever and received a reward!
+  thank: Thank you for voting for the server! Here is a little reward for you %player%!
+  rewards:
+    - "minecraft:give %player% minecraft:diamond 1"
+    - "crate give %player% key"

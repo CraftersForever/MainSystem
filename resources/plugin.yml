@@ -14,3 +14,16 @@ commands:
     description: Clears the chat for all players without permission clearchat.ignore
     usage: /<command>
     permission: mainsystem.clearchat
+  teamspeak:
+    description: Prints out the adress of the teamspeak server.
+    usage: /<command>
+  discord:
+    description: Prints outh the Invite Link to the Discord Server.
+    usage: /<command>
+  ticket:
+    description: Creates a support ticket
+    usage: /<command> [description]
+    aliases: report
+  vote:
+    description: Displays the vote link.
+    usage: /<command>

@@ -1,5 +1,7 @@
 package de.craftersforever.mainsystem;
 
+import de.craftersforever.mainsystem.command.TextCommand;
+import de.craftersforever.mainsystem.command.TicketCommand;
 import de.craftersforever.mainsystem.listener.*;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -15,10 +17,13 @@ import java.util.logging.Level;
 
 public class MainSystem extends JavaPlugin {
 
-    private ServerPingEventListener pingEventListener;
-    private String motd, joinSubTitle, joinTitle,tablistHeader,tablistFooter;
+    private String motd, joinSubTitle, joinTitle, tablistHeader, tablistFooter, trelloKey, trelloToken, trelloListID;
     private CachedServerIcon icon = Bukkit.getServerIcon();
     private List<String> tntEnabledWorlds;
+    private TrelloWebhook trelloWebhook;
+    private boolean shopChestLoaded;
+    private boolean shopChestLimitEnabled;
+    private VoteManager voteManager;
 
 
     public void onEnable() {
@@ -26,8 +31,14 @@ public class MainSystem extends JavaPlugin {
             return;
         }
         loadDataFromConfig();
-        registerCommands();
+        voteManager = new VoteManager(this);
         registerListeners();
+        shopChestLoaded = getServer().getPluginManager().getPlugin("ShopChest") != null;
+
+    }
+
+    public void onDisable() {
+        voteManager.saveUnclaimedVotesToConfig();
     }
 
     private boolean initialiseFiles() {
@@ -51,9 +62,14 @@ public class MainSystem extends JavaPlugin {
         manager.registerEvents(new PlayerAsyncChatEventListener(this), this);
         manager.registerEvents(new PlayerJoinEventListener(this), this);
         manager.registerEvents(new PlayerQuitEventListener(this), this);
+        manager.registerEvents(new VotifierEventListener(voteManager), this);
     }
 
     private void registerCommands() {
+        getCommand("teamspeak").setExecutor(new TextCommand(getConfig().getString("command.teamspeak")));
+        getCommand("discord").setExecutor(new TextCommand(getConfig().getString("command.discord")));
+        getCommand("vote").setExecutor(new TextCommand(getConfig().getString("command.vote")));
+        getCommand("ticket").setExecutor(new TicketCommand(this, trelloWebhook));
     }
 
     private void loadDataFromConfig() {
@@ -74,6 +90,14 @@ public class MainSystem extends JavaPlugin {
         tablistFooter = Util.convertToOutputString(getConfig().getString("tablist.footer"));
         //Load Values for TNT
         tntEnabledWorlds = getConfig().getStringList("tnt.enabledworlds");
+        trelloKey = getConfig().getString("trello.key");
+        trelloToken = getConfig().getString("trello.token");
+        trelloListID = getConfig().getString("trello.listID");
+        trelloWebhook = new TrelloWebhook(trelloListID, trelloKey, trelloToken);
+        if(voteManager!=null) {
+            voteManager.loadMessagesAndRewardsFromConfig();
+        }
+        registerCommands();
     }
 
 
@@ -82,14 +106,14 @@ public class MainSystem extends JavaPlugin {
         if (command.getName().equalsIgnoreCase("reloadMainSystem")) {
             loadDataFromConfig();
         }
-        if(command.getName().equalsIgnoreCase("clearchat")){
-            for(Player p: getServer().getOnlinePlayers()){
-                if(!p.hasPermission("clearchat.ignore")){
-                    for(int i = 0; i<100;i++){
+        if (command.getName().equalsIgnoreCase("clearchat")) {
+            for (Player p : getServer().getOnlinePlayers()) {
+                if (!p.hasPermission("clearchat.ignore")) {
+                    for (int i = 0; i < 100; i++) {
                         p.sendMessage("");
                     }
                 }
-                p.sendMessage("§2Der Chat wurde von §6"+sender.getName()+" §2geleert!");
+                p.sendMessage("§2Der Chat wurde von §6" + sender.getName() + " §2geleert!");
             }
             sender.sendMessage("§2Der Chat wurde erfolgreich geleert. Die Nachrichten tauchen aber weiter im Log auf.");
         }
@@ -117,11 +141,11 @@ public class MainSystem extends JavaPlugin {
         return tntEnabledWorlds;
     }
 
-    public String getTablistHeader(){
-        return  tablistHeader;
+    public String getTablistHeader() {
+        return tablistHeader;
     }
 
-    public String getTablistFooter(){
+    public String getTablistFooter() {
         return tablistFooter;
     }
 }
